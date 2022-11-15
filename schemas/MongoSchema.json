@@ -1,0 +1,77 @@
+{
+    "bsonType": "object",
+    "title": "movies",
+    "required":[
+        "_id",  
+        "movieID",
+        "imdbID", 
+        "tmdbID", 
+        "title",  
+        "genres"
+    ],
+    "properties": {
+        "_id" : {"bsonType": "objectID" },
+        "imdbID": {"bsonType" : "number" },
+        "tmdbID": {"bsonType" : "number"},
+        "title": {
+            "bsonType" : "string",
+            "maxLength" : 100,
+            "minLenght" : 1
+        },
+        "genres":{
+            "bsonType": "string",
+            "pattern" : "^[A-Za-z \\-]+(\\|[A-Za-z \\-]+)*"
+        },
+        "genome_scores":{
+            "bsonType" : "array",
+            "items": {
+                "bsonType": "object",
+                "required":[
+                    "tag",
+                    "relevance"
+                ],
+                "properties":{
+                    "tag" : {"bsonType":"string"},
+                    "relevance":{"bsonType":"double"}
+                }
+            },
+            "maxItems": 1128
+        },
+        "tags":{
+            "bsonType":"array",
+            "items":{
+                "bsonType":"object",
+                "required":[
+                    "timestamp",
+                    "user_id",
+                    "tag"
+                ],
+                "properties":{
+                    "timestamp" : {"bsonType": "timestamp"},
+                    "user_id" : {"bsonType" : "number"},
+                    "tag" : {
+                        "bsonType" : "string",
+                        "maxLength" : 250
+                    }
+                }
+            }
+        },
+        "ratings":{
+            "bsonType": "array",
+            "items": {
+                "bsonType" : "object",
+                "required":[
+                    "timestamp",
+                    "user_id",
+                    "rating"
+                ],
+                "properties":{
+                    "timestamp" : {"bsonType":"timestamp"},
+                    "user_id" : {"bsonType":"number"},
+                    "rating" : {"bsonType":"number"}
+                }
+            }
+        }
+    }
+
+}
