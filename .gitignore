@@ -1,4 +1,4 @@
-src/mongodb/data/all_data.json
+src/mongodb/data/*
 movies/*
 BDA_project_2022_2023_v1.pdf
 src/sqlite/database/*
