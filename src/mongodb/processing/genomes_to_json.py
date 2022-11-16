@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import time
 
-DATA_PATH = "../../movies/"
+DATA_PATH = "../../../movies/"
 movies = pd.read_csv(DATA_PATH + "movies.csv", header=0)
 movie_ids = movies["movieId"] #for cycles
 
@@ -35,6 +35,6 @@ del genome_scores
 print("Genomes Processing Finished")
 print(toc-tic)
 
-with open("data/genome_list.json","w") as f:
+with open("../data/genome_list.json","w") as f:
     json.dump(genome_json, f, indent=4)
     f.close()

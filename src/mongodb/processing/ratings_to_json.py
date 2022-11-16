@@ -3,7 +3,7 @@ import numpy as np
 import json
 import time
 
-DATA_PATH = "../../movies/"
+DATA_PATH = "../../../movies/"
 movies = pd.read_csv(DATA_PATH + "movies.csv", header=0)
 
 ### Read Ratings ###
@@ -26,6 +26,6 @@ del ratings
 print(toc - tic)
 
 
-with open("data/ratings_list.json","w") as f:
+with open("../data/ratings_list.json","w") as f:
     json.dump(ratings_json, f, indent=4)
     f.close()
