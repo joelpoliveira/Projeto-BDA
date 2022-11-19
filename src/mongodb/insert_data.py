@@ -43,13 +43,32 @@ for file in sorted(files, key=lambda x: key[x]):
                 print(f"Inserting {file}")
                 data = json.load(f)
                 for movie in data:
+                    movie_id = movie["movieId"]
                     temp = movie["genome_scores"]
+                    #add movieId reference
+                    temp = list(
+                        map(
+                            lambda item: item | {"movie_id": movie_id}, temp
+                        )
+                    )
                     movie["genome_scores"] = coll_genomes.insert_many(temp).inserted_ids
                     
                     temp = movie["tags"]
+                    #add movie_id reference
+                    temp = list(
+                        map(
+                            lambda item: item | {"movie_id" : movie_id}, temp
+                        )
+                    )
                     movie["tags"] = coll_tags.insert_many(temp).inserted_ids
 
                     temp = movie["ratings"]
+                    #add movie_id reference
+                    temp = list(
+                        map(
+                            lambda item: item | {"movie_id" : movie_id}, temp
+                        )
+                    )
                     movie["ratings"] = coll_ratings.insert_many(temp).inserted_ids
 
                     movie["_id"] = movie.pop("movieId")

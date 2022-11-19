@@ -2,7 +2,7 @@
     "schemas" : [ 
         {
             "bsonType": "object",
-            "title": "movies",
+            "title": "Movies",
             "required":[
                 "_id",  
                 "movieID",
@@ -12,22 +12,18 @@
                 "genres"
             ],
             "properties": {
-                "_id" : {"bsonType": "objectID" },
+                "_id" : {"bsonType": "number" },
                 "imdbID": {"bsonType" : "number" },
                 "tmdbID": {"bsonType" : "number"},
                 "title": {
                     "bsonType" : "string",
                     "maxLength" : 100,
-                    "minLenght" : 1
+                    "minLength" : 1
                 },
-                "genres":{
-                    "bsonType": "string",
-                    "pattern" : "^[A-Za-z \\-]+(\\|[A-Za-z \\-]+)*"
-                },
+                "genres":{"bsonType": "string"},
                 "genome_scores":{
                     "bsonType" : "array",
-                    "items": {"bsonType":"objectId"},
-                    "maxItems": 1128
+                    "items": {"bsonType":"objectId"}
                 },
                 "tags":{
                     "bsonType":"array",
@@ -41,11 +37,10 @@
         },
         {
             "bsonType":"object",
-            "title": "tags",
+            "title": "Tags",
             "required":[
                 "timestamp",
-                "user_id",
-                "tag"
+                "user_id"
             ],
             "properties":{
                 "timestamp" : {"bsonType": "timestamp"},
@@ -58,7 +53,7 @@
         },
         {
             "bsonType" : "object",
-            "title": "ratings",
+            "title": "Ratings",
             "required":[
                 "timestamp",
                 "user_id",
@@ -72,14 +67,16 @@
         },
         {
             "bsonType": "object",
-            "title":"genome_scores",
+            "title":"Genome Scores",
             "required":[
                 "tag",
-                "relevance"
+                "relevance",
+                "movie_id"
             ],
             "properties":{
                 "tag" : {"bsonType":"string"},
-                "relevance":{"bsonType":"double"}
+                "relevance":{"bsonType":"double"},
+                "movie_id":{"bsonType":"number"}
             }
         }
     ]
