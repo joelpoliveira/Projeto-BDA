@@ -1,5 +1,6 @@
 import sqlite3
-from pprint import pprint
+
+from time import time
 
 db = sqlite3.connect("./database/Project_BDA.db")
 
@@ -40,25 +41,13 @@ query2 = """ SELECT Movies.title, AVG(rating) AS avg_rating
              LIMIT 10
          """ % (tagid)
 
-query3 = """SELECT movieid
-            FROM (
-                SELECT gs.movieid, gs.relevance, tagid
-                FROM Genome_scores gs
-                INNER JOIN (
-                    SELECT movieid, MAX(relevance) rel
-                    FROM Genome_scores
-                    GROUP BY movieid
-                ) agg 
-                ON gs.movieid = agg.movieid 
-                AND gs.relevance = agg.rel
-            )
-            WHERE tagid = %d
-""" % (tagid)
-
-
 try:
     cur = db.cursor()
-    cur.execute(query3)
+    start = time()
+    cur.execute(query2)
+    print(time() - start)
+
+    input()
     result = cur.fetchall()
     for item in result:
         print(item)
