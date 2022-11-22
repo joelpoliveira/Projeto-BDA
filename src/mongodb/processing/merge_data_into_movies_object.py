@@ -2,18 +2,20 @@ import pandas as pd
 import time
 import json
 
+def get_json(file):
+    with open(file, "r") as f:
+        var = json.load(f)
+        f.close()
+    return var
+
 DATA_PATH = "../../../movies/"
 ### Merge movies and links in a single table ###
 movies = pd.read_csv(DATA_PATH + "movies.csv", header=0)
 movies_rank = pd.read_csv(DATA_PATH + "links.csv", header=0)
 movies = movies.merge(movies_rank, on="movieId")
 movies = movies.to_dict(orient="records")
-del movies_rank
 
-with open("../data/genome_list.json", "r") as f:
-    genomes = json.load(f)
-    f.close()
-
+genomes = get_json("../data/genomes.json")
 tic=time.time()
 movies = list(map(lambda x,y: x|{"genome_scores": y}, movies, genomes))
 print(time.time() - tic)
