@@ -4,6 +4,10 @@ from time import time
 client = MongoClient()
 db = client.Project_BDA
 
+#Selecionar os filmes com maior 'rating'.
+#Os filmes em consideração para a pesquisa 
+#são que têm uma certa tag como a mais relevante
+tag = "007"
 query = [   { "$sort" : {"relevance": -1}},
             {"$group" : {
                     "_id" : "$movieId",
@@ -11,7 +15,7 @@ query = [   { "$sort" : {"relevance": -1}},
                     "tag" : { "$first" : "$tag" }
                 }
             },
-            { "$match" : {"tag" : "007"}},
+            { "$match" : {"tag" : f"{tag}"}},
             { "$project" : {
                 "_id" : 1,
                 "relevance" : 0,
