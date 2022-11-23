@@ -3,15 +3,30 @@ from time import time
 
 db = sqlite3.connect("./database/Project_BDA.db")
 
-#Selecionar as 10 Tags mais relevantes de um filme
-query1 = """SELECT tag
+userid = 27
+query = """
+    SELECT title
+    FROM movies
+    WHERE genres like '%Action%'
+""" 
+
+query2 = """SELECT userid, tag
             FROM Tags
-            INNER JOIN (
-                SELECT tagid
-                FROM Genome_Scores
-                WHERE movieid=1
-                ORDER BY relevance DESC
-                LIMIT 10
-                ) Genomes
-            ON Tags.tagid = Genomes.tagid
-            """
+            WHERE ts BETWEEN 
+                    CAST(strftime('%s', '2007-01-01') AS integer)
+                AND
+                    CAST(strftime('%s', '2008-01-01') AS integer)
+"""
+try:
+    cur = db.cursor()
+
+    start=time()
+    cur.execute(query2)
+    print(time() - start)
+
+    input()
+    results = cur.fetchall()
+    for item in results:
+        print(item)
+except Exception as e:
+    print(e)
