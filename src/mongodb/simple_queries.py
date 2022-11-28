@@ -17,18 +17,21 @@ query2 = [
     {   
         "$and" : [
                 {"timestamp" : 
-                    {"$gt" : datetime(2007,1,1).timestamp()}
+                    {"$gt" : datetime(1980,1,1).timestamp()}
                 },
                 {"timestamp" : 
-                    {"$lt" : datetime(2008,1,1).timestamp()}
+                    {"$lt" : datetime(2022,1,1).timestamp()}
                 }
             ]
     },
     {"userid":1, "_id":0, "tag":1}]
 
+query3 = [{"_id" : 1}, {"ratings" : 1, "_id" : 0}]
+
 start = time()
 # results = coll_movies.find(*query)
-results = coll_tags.find(*query2)
+results = coll_movies.find(*query3)
+# results = coll_tags.find(*query2)
 print(time() - start)
 
 input()

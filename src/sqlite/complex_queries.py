@@ -70,10 +70,18 @@ query2 = """
             WHERE tbl.movieid=%d
 """ % (subquery, subquery, movieid)
 
+movieid = 1
+query3 = """SELECT m.movieid, AVG(rating)
+            FROM Movies m, Ratings r
+            WHERE m.movieid = r.movieid
+            GROUP BY m.movieid 
+            HAVING m.movieid=%d
+""" % (movieid)
+
 try:
     cur = db.cursor()
     start = time()
-    cur.execute(query2)
+    cur.execute(query3)
     print(time() - start)
 
     input()

@@ -156,14 +156,38 @@ query2 = [
     {"$limit" : 10}
 ]
 
+query3 = [
+    {"$match" : {"_id" : 1}},
+    {"$lookup" : {
+        "from" : "Ratings",
+        "localField" : "_id",
+        "foreignField" : "movieId",
+        "as": "rating"
+    }},
+    {"$unwind" : "$rating"},
+    {"$group" : {
+        "_id" : "$_id",
+        "mean" : {"$avg" : "$rating.rating"}
+    }}
+]
+
+other_query3 = [
+    {"$match" : {"_id" : 1}},
+    {"$project" : {
+        "_id" : 1,
+        "ratings" : {"$avg" : "$ratings.rating"}
+    }},
+]
+
 coll_gen = db["Genome_Scores"]
 coll_ratings = db["Ratings"]
 coll_movies = db["Movies"]
 coll_tags = db["Tags"]
 
 start = time()
-docs = coll_gen.aggregate(query)
+# docs = coll_gen.aggregate(query)
 # docs = coll_tags.aggregate(query2)
+docs = coll_movies.aggregate(query3)
 print(time() - start)
 
 input()
