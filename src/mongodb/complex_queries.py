@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 from time import time
-
+from pprint import pprint
 client = MongoClient()
 db = client.Project_BDA
 
@@ -35,10 +35,9 @@ query = [
             #     "tag" : "$records.tag"
             # }},
             # {"$match" : {"tag" : tag}},
-            {"$project" : {
-                "_id" : 1,
-                # "tag" : 0
-            }},
+            # {"$project" : {
+            #     "_id" : 1,
+            # }},
             {"$lookup" : {
                 "from" : "Ratings",
                 "localField" : "_id",
@@ -67,7 +66,6 @@ query = [
                 "rating" : 1
             }},
             {"$sort" : {"rating" : -1}}
-            # {"$limit" : 5}
         ]
 
 #Obter os filmes cujas tags por 
@@ -76,11 +74,7 @@ query = [
 # certo filme escolhido à priori
 movieid = 1;
 subsubquery = [
-    {"$project" : {
-        "_id" : 0,
-        "movieId" : 1,
-        "tag" : {"$toLower" : {"$trim" : {"input": "$tag"}}},
-    }},
+    # {"$project" : {"_id" : 0,"movieId" : 1,"tag" : {"$toLower" : {"$trim" : {"input": "$tag"}}},}},
     {"$group" : {
         "_id" : {
             "movieid" : "$movieId", 
@@ -120,62 +114,77 @@ subquery = [
 query2 = [
     *subquery,
     {"$match" : {"_id" : movieid}},
-    {"$project" : {
-        "_id" : "$_id",
-        "tag" : "$tags._id.tag",
+    {"$lookup" : {
+        "from" : "Tags",
+        "let" : {
+            "movieid" : "$_id",
+            "tag" : "$tags._id.tag"
+        },
+        "pipeline" : [
+            *subquery,
+            {"$match" : {
+                "$expr" : {
+                    "$and" : [
+                        {"$ne" : ["$_id", "$$movieid"]},
+                        {"$eq" : ["$tags._id.tag", "$$tag"]}
+                    ]
+                }
+            }},
+        ],
+        "as" :"matches"
     }},
-    # {"$lookup" : {
-    #     "from" : "Tags",
-    #     "let" : {
-    #         "movieid" : "$_id",
-    #         "tag" : "$tag"
-    #     },
-    #     "pipeline" : [
-    #         *subquery,
-    #         {"$match" : {"_id" : {"$not" : {"$eq" : "$$movieid"}}}},
-    #         {"$project" : {
-    #             "_id" : "$_id",
-    #             "tag" : "$tags._id.tag",
-    #         }},
-    #     ],
-    #     "as" :"matches"
-    # }},
-    # {"$unwind" : "$matches"},
-    # {"$project" : {
-    #     "_id1" : "$_id",
-    #     "tag1" : "$tag",
-    #     "_id2" : "$matches._id",
-    #     "tag2" : "$matches._tag"
-    # }},
-    # {"$match" : {
-    #     "$expr" : {
-    #         "$ne" : ["$_id", 1]
-    #         }
-    #     }
-    # },
-    {"$limit" : 10}
+    {"$unwind" : "$matches"},
+    {"$project" : {
+        "_id" : 0,
+        "_id1" : "$_id",
+        # "tag1" : "$tags._id.tag",
+        "_id2" : "$matches._id",
+        # "tag2" : "$matches.tags._id.tag"
+    }},
+    {"$sort" : {"_id2": 1}}
 ]
 
+
+movieid=1#93886
 query3 = [
-    {"$match" : {"_id" : 1}},
+    {"$match" : {"_id" : movieid}},
     {"$lookup" : {
-        "from" : "Ratings",
+        "from" : "Ratings_v2",
         "localField" : "_id",
         "foreignField" : "movieId",
         "as": "rating"
     }},
     {"$unwind" : "$rating"},
     {"$group" : {
-        "_id" : "$_id",
-        "mean" : {"$avg" : "$rating.rating"}
+        "_id" : "$title",
+        "rating" : {"$avg" : "$rating.rating"}
+    }}
+]
+
+query3_2 = [
+    {"$match" : {"movieId" : movieid}},
+    {"$group" : {
+        "_id" : "$movieId",
+        "rating" : {"$avg" : "$rating"}
+    }},
+    {"$lookup" : {
+        "from" : "Movies",
+        "localField" : "_id",
+        "foreignField" : "_id",
+        "as" : "movie"
+    }},
+    {"$unwind" : "$movie"},
+    {"$project" : {
+        "_id" : "$movie.title",
+        "rating" : "$rating"
     }}
 ]
 
 other_query3 = [
-    {"$match" : {"_id" : 1}},
+    {"$match" : {"_id" : movieid}},
     {"$project" : {
-        "_id" : 1,
-        "ratings" : {"$avg" : "$ratings.rating"}
+        "_id" : "$title",
+        "rating" : {"$avg" : "$ratings.rating"}
     }},
 ]
 
@@ -184,10 +193,16 @@ coll_ratings = db["Ratings"]
 coll_movies = db["Movies"]
 coll_tags = db["Tags"]
 
+
 start = time()
+# pprint(db.command('aggregate', 'Genome_Scores', pipeline=query, explain=True))
 # docs = coll_gen.aggregate(query)
-# docs = coll_tags.aggregate(query2)
-docs = coll_movies.aggregate(query3)
+docs = coll_tags.aggregate(query2, collation = {"locale" : "en", "strength":2})
+
+# docs = coll_movies.aggregate(query3)
+# docs = coll_ratings.aggregate(query3_2)
+# docs = coll_movies.aggregate(other_query3)
+
 print(time() - start)
 
 input()

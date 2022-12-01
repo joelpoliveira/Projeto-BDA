@@ -31,6 +31,24 @@ query = """ SELECT Movies.title, AVG(rating) AS avg_rating
              ORDER BY avg_rating DESC
          """ % (tagid)
 
+# Adicionar tabela com as tags mais relevantes de cada filme(*)
+# adicionar indice na tabela ratings, na coluna "movieId"
+# adicionar indice na tabela (*) sob o camp tagid
+query_2 = """
+SELECT m.title, matches.avg_rating
+FROM movies m
+INNER JOIN (SELECT r.movieid, avg(rating) avg_rating, COUNT(*) counts
+            FROM Movie_genome_tags_max_relevance tbl, Ratings r
+            WHERE tbl.tagid = %d
+                AND tbl.movieid = r.movieid
+            GROUP BY r.movieid
+            HAVING counts>100
+        ) matches
+ON m.movieid = matches.movieid
+ORDER BY avg_rating
+
+""" % (tagid)
+
 #Obter os filmes cujas tags por 
 # utilizador mais frequentes
 # coincidem com as de um
@@ -68,20 +86,27 @@ query2 = """
             ON tbl.tag = t.tag
                 AND tbl.movieid!=t.movieid
             WHERE tbl.movieid=%d
+            ORDER BY t.movieid
 """ % (subquery, subquery, movieid)
 
 movieid = 1
-query3 = """SELECT m.movieid, AVG(rating)
+query3="""SELECT m.movieid, AVG(rating)
             FROM Movies m, Ratings r
             WHERE m.movieid = r.movieid
             GROUP BY m.movieid 
             HAVING m.movieid=%d
 """ % (movieid)
+other_query3 = """SELECT r.movieid, AVG(rating)
+            FROM Movies m, Ratings r
+            WHERE m.movieid = r.movieid
+            GROUP BY r.movieid 
+            HAVING r.movieid=%d
+""" % (movieid)
 
 try:
     cur = db.cursor()
     start = time()
-    cur.execute(query3)
+    cur.execute(query)
     print(time() - start)
 
     input()
