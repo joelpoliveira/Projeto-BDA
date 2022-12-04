@@ -3,6 +3,7 @@ from time import time
 
 db = sqlite3.connect("./database/Project_BDA.db")
 
+# Update ao rating que um utilizador deu
 userid = 134
 rating = 3.5
 query = """UPDATE Ratings

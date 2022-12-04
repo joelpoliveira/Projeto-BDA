@@ -3,13 +3,15 @@ from time import time
 
 db = sqlite3.connect("./database/Project_BDA.db")
 
+# Mostrar os filmes que sejam do "genre" ação
 userid = 27
-query = """
+query1 = """
     SELECT title
     FROM movies
     WHERE genres like '%Action%'
 """
 
+# Mostrar as tags, e o utilizador que as criou, que tenham sido criadas entre 2007 e 2008
 query2 = """SELECT userid, tag
             FROM Tags
             WHERE ts BETWEEN 
@@ -17,11 +19,12 @@ query2 = """SELECT userid, tag
                 AND
                     CAST(strftime('%s', '2008-01-01') AS integer)
 """
+
 try:
     cur = db.cursor()
 
     start=time()
-    cur.execute(query2)
+    cur.execute(query2) #Execute query here (change name to change query executed)
     print(time() - start)
 
     input()

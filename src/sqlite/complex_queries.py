@@ -1,7 +1,7 @@
 import sqlite3
 from time import time
 
-#Connect to database
+#Connect to database in folder
 db = sqlite3.connect("./database/Project_BDA.db")
 
 #Subqueries used in query 1
@@ -38,7 +38,8 @@ query1 = """ SELECT Movies.title, AVG(rating) AS avg_rating
 # Adicionar tabela com as tags mais relevantes de cada filme(*)
 # adicionar indice na tabela ratings, na coluna "movieId"
 # adicionar indice na tabela (*) sob o camp tagid
-query_2 = """
+# Versão optimizada da query 1
+query1_2 = """
     SELECT m.title, matches.avg_rating
     FROM movies m
     INNER JOIN (
@@ -52,6 +53,26 @@ query_2 = """
     ON m.movieid = matches.movieid
     ORDER BY avg_rating
 """ % (tagid)
+
+#Create extra table for query 1_2
+query1_2_create_table = """CREATE TABLE Movie_genome_tags_max_relevance (
+	movieid INT,
+	tagid INT,
+	PRIMARY KEY(movieid, tagid)
+)"""
+
+#Insert into extra table for query 1_2
+query1_2_insert_into_table = """INSERT INTO Movie_genome_tags_max_relevance
+                SELECT gs.movieid, gs.tagid
+                FROM Genome_Scores gs
+                INNER JOIN (
+                    SELECT movieid, MAX(relevance) relevance
+                    FROM Genome_scores
+                    GROUP BY movieid
+                ) gs_max_relevance
+                ON gs.movieid = gs_max_relevance.movieid
+                    AND gs.relevance = gs_max_relevance.relevance
+"""
 
 #Subqueries used in query 2
 subsubquery2 = """SELECT m.movieid movieid, m.title title, 
@@ -96,7 +117,7 @@ query2 = """
             ORDER BY t.movieid
 """ % (subquery2, subquery2, movieid)
 
-# Obter o rating average de um filme, isto sendo obtido através do seu movieid
+# Obter o average rating de um filme
 movieid = 200
 query3 = """SELECT m.movieid, m.title, AVG(rating)
             FROM Movies m, Ratings r
@@ -105,8 +126,8 @@ query3 = """SELECT m.movieid, m.title, AVG(rating)
             HAVING m.movieid=%d
 """ % (movieid)
 
-# Igual à query anterior, só que utilizando um agrupamento dos ratings em vez dos movies (igual resultado)
-query4 = """SELECT r.movieid, m.title, AVG(rating)
+# Igual à query anterior, só que utilizando um agrupamento dos ratings em vez dos movies (resultado igual)
+query3_2 = """SELECT r.movieid, m.title, AVG(rating)
             FROM Movies m, Ratings r
             WHERE m.movieid = r.movieid
             GROUP BY r.movieid 
@@ -117,20 +138,19 @@ query4 = """SELECT r.movieid, m.title, AVG(rating)
 #Mostrar os indexes
 show_indexes = "Select * from SQLite_master"
 
-#Create indexes for above queries
-index_movies_movieid = ("CREATE UNIQUE INDEX index_movies_movieid ON Movies (movieid);") #Made for query 3, works well with next aswell
-index_ratings_movieid = ("CREATE INDEX index_ratings_movieid ON Ratings (movieid);") #Made for query 4, works well with previous aswell
-index_tags_movieid = ("CREATE INDEX index_tags_movieid ON SELECT Tags (movieid);") #Made for query 2, doesnt change anything
-
-#Auto indexes created seem to not do anything?
+#Created indexes for above queries
+index_movies_movieid = ("CREATE UNIQUE INDEX index_movies_movieid ON Movies (movieid);") #Made for query 3, works well
+index_tags_movieid = ("CREATE INDEX index_tags_movieid ON Tags (movieid);") #Made for query 2, doesnt change
+index_ratings_movieid = ("CREATE INDEX index_ratings_movieid ON Ratings (movieid);") #Made for query 1_2 and 3_2, works well
+index_extra_tagid = ("CREATE INDEX index_extra_tagid ON Movie_genome_tags_max_relevance (tagid);") #Made for query 1_2, works wells
 
 #Drop an index (title change depending on index we wish to remove)
-drop_index = ("DROP INDEX index_genome_movieid")
+drop_index = ("DROP INDEX index_tags_movieid")
 
 try:
     cur = db.cursor()
     start = time()
-    cur.execute(query2) #Change this to execute which query / index you wish to execute
+    cur.execute(query3) #Change this to execute which query / index you wish to execute
     print(time() - start)
 
     input() #Requires an input (intermediary step) to show result
