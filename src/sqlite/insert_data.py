@@ -2,7 +2,7 @@ import sqlite3
 import pandas as pd
 import time
 
-DATA_PATH = "../../movies/"
+DATA_PATH = "../../Dataset/"
 
 db = sqlite3.connect("./database/Project_BDA.db")
 TIMEIT = False

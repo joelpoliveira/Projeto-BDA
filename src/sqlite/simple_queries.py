@@ -8,7 +8,7 @@ query = """
     SELECT title
     FROM movies
     WHERE genres like '%Action%'
-""" 
+"""
 
 query2 = """SELECT userid, tag
             FROM Tags
