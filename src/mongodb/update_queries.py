@@ -9,6 +9,7 @@ coll_ratings = db["Ratings"]
 coll_movies = db["Movies"]
 coll_tags = db["Tags"]
 
+# Update ao rating que um utilizador deu
 userid = 134
 rating = 3.5
 query = [

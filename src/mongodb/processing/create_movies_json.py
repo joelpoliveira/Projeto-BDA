@@ -2,7 +2,7 @@ import pandas as pd
 import time
 import json
 
-DATA_PATH = "../../../movies/"
+DATA_PATH = "../../../Dataset/"
 
 ### Merge movies and links in a single table ###
 movies = pd.read_csv(DATA_PATH + "movies.csv", header=0)

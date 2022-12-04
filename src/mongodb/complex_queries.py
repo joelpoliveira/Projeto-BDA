@@ -4,11 +4,11 @@ from pprint import pprint
 client = MongoClient()
 db = client.Project_BDA
 
-#Selecionar os filmes com maior 'rating'.
+#Selecionar os filmes com maior 'rating' relevantes a uma tag (tagid).
 #Os filmes em consideração para a pesquisa 
 #são que têm uma certa tag como a mais relevante
 tag = "007 (series)"
-query = [   
+query1 = [
             {"$group" : {
                     "_id" : "$movieId",
                     "relevance" : {"$max" : "$relevance"},
@@ -68,11 +68,8 @@ query = [
             {"$sort" : {"rating" : -1}}
         ]
 
-#Obter os filmes cujas tags por 
-# utilizador mais frequentes
-# coincidem com as de um
-# certo filme escolhido à priori
-movieid = 1;
+# Subqueries utilizadas na query 2
+movieid = 1
 subsubquery = [
     # {"$project" : {"_id" : 0,"movieId" : 1,"tag" : {"$toLower" : {"$trim" : {"input": "$tag"}}},}},
     {"$group" : {
@@ -111,6 +108,12 @@ subquery = [
     {"$unwind":"$tags"},
     # {"$limit" : 10}
 ]
+
+#Obter os filmes cujas tags por
+# utilizador mais frequentes
+# coincidem com as de um
+# certo filme escolhido à priori
+## ** Procurar por filmes semelhantes ao selecionado **
 query2 = [
     *subquery,
     {"$match" : {"_id" : movieid}},
@@ -144,8 +147,8 @@ query2 = [
     {"$sort" : {"_id2": 1}}
 ]
 
-
-movieid=1#93886
+# Obter o average rating de um filme
+movieid = 200
 query3 = [
     {"$match" : {"_id" : movieid}},
     {"$lookup" : {
@@ -161,6 +164,8 @@ query3 = [
     }}
 ]
 
+# Obter o average rating de um filme
+# Igual à query anterior, só que utilizando um agrupamento dos ratings em vez dos movies (resultado igual)
 query3_2 = [
     {"$match" : {"movieId" : movieid}},
     {"$group" : {
@@ -180,7 +185,9 @@ query3_2 = [
     }}
 ]
 
-other_query3 = [
+# Obter o average rating de um filme
+# Igual á query anterior, só que mais simples
+query4 = [
     {"$match" : {"_id" : movieid}},
     {"$project" : {
         "_id" : "$title",
@@ -196,12 +203,12 @@ coll_tags = db["Tags"]
 
 start = time()
 # pprint(db.command('aggregate', 'Genome_Scores', pipeline=query, explain=True))
-# docs = coll_gen.aggregate(query)
+# docs = coll_gen.aggregate(query1)
 docs = coll_tags.aggregate(query2, collation = {"locale" : "en", "strength":2})
 
 # docs = coll_movies.aggregate(query3)
 # docs = coll_ratings.aggregate(query3_2)
-# docs = coll_movies.aggregate(other_query3)
+# docs = coll_movies.aggregate(query4)
 
 print(time() - start)
 

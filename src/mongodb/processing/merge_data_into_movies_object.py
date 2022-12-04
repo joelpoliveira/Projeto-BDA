@@ -8,7 +8,8 @@ def get_json(file):
         f.close()
     return var
 
-DATA_PATH = "../../../movies/"
+DATA_PATH = "../../../Dataset/"
+
 ### Merge movies and links in a single table ###
 movies = pd.read_csv(DATA_PATH + "movies.csv", header=0)
 movies_rank = pd.read_csv(DATA_PATH + "links.csv", header=0)

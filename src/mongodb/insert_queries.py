@@ -9,6 +9,7 @@ coll_ratings = db["Ratings"]
 coll_movies = db["Movies"]
 coll_tags = db["Tags"]
 
+#Insere um filme na base de dados
 movieid = 999999
 title = "\'Rise of the Fallen Lizards (2022)\'"
 genres = "\'Action|Horror|Lizard\'"
@@ -20,6 +21,7 @@ query1 = { "movieid": movieid,
            "imdbid": imdb,
            "tmdbid": tmdb }
 
+#Insere um rating na base de dados
 userid = 134
 rating = 3.5
 ts = 999999
@@ -28,7 +30,7 @@ query2 = { "userid": userid,
            "rating": rating,
            "ts": ts }
 
-
+#Insere uma tag na base de dados
 tagid = 9999999
 tag = "\'Lizard\'"
 ts = 1000000
