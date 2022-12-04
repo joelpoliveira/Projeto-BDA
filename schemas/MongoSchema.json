@@ -40,11 +40,11 @@
             "title": "Tags",
             "required":[
                 "timestamp",
-                "user_id"
+                "userId"
             ],
             "properties":{
                 "timestamp" : {"bsonType": "timestamp"},
-                "user_id" : {"bsonType" : "number"},
+                "userId" : {"bsonType" : "number"},
                 "tag" : {
                     "bsonType" : "string",
                     "maxLength" : 250
@@ -56,12 +56,12 @@
             "title": "Ratings",
             "required":[
                 "timestamp",
-                "user_id",
+                "userId",
                 "rating"
             ],
             "properties":{
                 "timestamp" : {"bsonType":"timestamp"},
-                "user_id" : {"bsonType":"number"},
+                "userId" : {"bsonType":"number"},
                 "rating" : {"bsonType":"number"}
             }
         },
@@ -71,12 +71,12 @@
             "required":[
                 "tag",
                 "relevance",
-                "movie_id"
+                "movieIdd"
             ],
             "properties":{
                 "tag" : {"bsonType":"string"},
                 "relevance":{"bsonType":"double"},
-                "movie_id":{"bsonType":"number"}
+                "movieId":{"bsonType":"number"}
             }
         }
     ]
