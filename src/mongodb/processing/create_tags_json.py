@@ -1,6 +1,6 @@
 import pandas as pd
 
-DATA_PATH = "../../../movies/"
+DATA_PATH = "../../../Dataset/"
 
 tags = pd.read_csv(DATA_PATH + "tags.csv", header=0)
 

@@ -10,9 +10,12 @@ coll_ratings = db["Ratings"]
 coll_movies = db["Movies"]
 coll_tags = db["Tags"]
 
+# Mostrar os filmes que sejam do "genre" ação
 movieid = 3000
-query = [{ "genres" : {"$regex" : ".*Action.*" }}, 
+query1 = [{ "genres" : {"$regex" : ".*Action.*" }},
          {"title" : 1, "_id" : 0}]
+
+# Mostrar as tags, e o utilizador que as criou, que tenham sido criadas entre 2007 e 2008
 query2 = [
     {   
         "$and" : [
@@ -26,12 +29,13 @@ query2 = [
     },
     {"userid":1, "_id":0, "tag":1}]
 
+# Mostrar todos os ratings associados ao primeiro filme
 query3 = [{"_id" : 1}, {"ratings" : 1, "_id" : 0}]
 
 start = time()
-# results = coll_movies.find(*query)
-results = coll_movies.find(*query3)
-# results = coll_tags.find(*query2)
+results = coll_movies.find(*query1)
+# results = coll_movies.find(*query2)
+# results = coll_tags.find(*query3)
 print(time() - start)
 
 input()

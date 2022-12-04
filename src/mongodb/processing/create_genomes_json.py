@@ -2,7 +2,7 @@ import pandas as pd
 import json
 from time import time
 
-DATA_PATH = "../../../movies/"
+DATA_PATH = "../../../Dataset/"
 
 genome_tags = pd.read_csv(DATA_PATH + "genome-tags.csv", header=0, index_col="tagId")
 genome_tags = dict(zip(genome_tags.index, genome_tags.tag))

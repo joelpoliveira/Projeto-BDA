@@ -2,8 +2,10 @@ import sqlite3
 import pandas as pd
 import time
 
-DATA_PATH = "../../movies/"
+#Have to change this variable depending on where your .csv files are at
+DATA_PATH = "../../Dataset/"
 
+#Connect to the database in the folder (its location)
 db = sqlite3.connect("./database/Project_BDA.db")
 TIMEIT = False
 

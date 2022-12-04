@@ -1,5 +1,6 @@
 import sqlite3
 
+#Has to be ran initially so that we can create the tables in the database
 db = sqlite3.connect("./database/Project_BDA.db")
 
 movies_query = """CREATE TABLE movies (

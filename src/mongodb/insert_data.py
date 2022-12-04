@@ -66,6 +66,7 @@ print("Start Inserting Movies")
 start = time()
 col_movies.insert_many(temp)
 print(time() - start)
+
 ### The code after this block is to create references 
 ### from movies to other objects that reference the movie.
 ### Not necessary for now , at least

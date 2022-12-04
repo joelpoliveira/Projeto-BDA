@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import time
 
-DATA_PATH = "../../../movies/"
+DATA_PATH = "../../../Dataset/"
 
 ratings = pd.read_csv(DATA_PATH + "ratings.csv", header=0)
 
